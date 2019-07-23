@@ -1,21 +1,36 @@
 
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<style>
- body {
- overflow: hidden;
- position: fixed;
- position: relative;
- }
- h1{
- overflow: hidden;
- position: fixed;
- position: absolute;
- top: 30%;
- left: 50%;
- transform: translate(-50%, -50%);
- }
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="alternate" type="application/rss+xml" title="Sileo" href="https://getsileo.app/feed.xml">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 
- </style>
+
+<link   rel="apple-touch-icon"  href="https://raw.githubusercontent.com/iamIKY2/App-IPA/master/Enigma.png">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+      
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+      
+<link href="https://getsileo.app/css/main.css" rel="stylesheet">
+
+<title>Cydia</title>
+
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+        <link href="https://getsileo.app/css/home.css" rel="stylesheet" />
+        
+        
+        
+        
+    </head>
+        
+        
+    </head>
+
  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
 </head>
 <body>
@@ -148,7 +163,7 @@ dgcf = function() {
 
 go = function(){
   console.log("going");
-  document.getElementById('bigButton').innerHTML = "Chạy jailbreak";
+  document.getElementById('bigButton').innerHTML = "Now";
   setTimeout(go_, 100);
 }
 
@@ -229,7 +244,7 @@ function go_(){
   console.log("after="+stale.length);
 
   if (stale.length != 0x41414141){
-    alert("Thiết bị của bạn đã jailbreak thất bại.Hãy thử lại");
+    alert("Hi Admin,you lose");
     location.reload();
     return;
   }
@@ -295,7 +310,7 @@ function go_(){
         mem2 = smsh;
         if (smsh.length != 0x10) {
 
-          document.getElementById('bigButton').innerHTML = "Run e"
+          document.getElementById('bigButton').innerHTML = "Done"
           setTimeout(function () {
               smashed(stale,payload_tar_ptr,payload_cydia_ptr,payload_launchctl_ptr,payload_offsets_ptr);
             }, 100);
@@ -312,15 +327,15 @@ function go_(){
 }
 
 function loadRes(){
-  console.log("Đang tải Resources");
-  document.getElementById('bigButton').innerHTML = "Chạy khai thác 1"
+  console.log("Downloading resources");
+  document.getElementById('bigButton').innerHTML = "Running Exploiting"
   setTimeout(function () {
     filestream = load_binary_resource("stage1.bin")
     payload_tar = getArrFromResource(load_binary_resource("payload/tar"))
     payload_launchctl = getArrFromResource(load_binary_resource("payload/launchctl"))
     payload_offsets = getArrFromResource(load_binary_resource("payload/offsets.json"))
 
-    document.getElementById('bigButton').innerHTML = "Chạy khai thác 2"
+    document.getElementById('bigButton').innerHTML = "Downloading Cydia"
     setTimeout(function () {
         payload_cydia = getArrFromResource(load_binary_resource("payload/Cydia.tar"))
         go();
@@ -328,20 +343,40 @@ function loadRes(){
       }, 100);
 }
 </script>
+<center>
+<main class="home">
+     <div class="jumbotron">
+     
+         <h1 data-aos="fade-up" data-aos-once="true" data-aos-duration="700">Enigma</h1>    
+    
+        <h2 data-aos="fade-up" data-aos-once="true" data-aos-duration="800">Support iOS 9.1 &rarr; 9.3.4</h2>
+      <h3>For 32 Bit</h3>
+       
+     <div id="stuff"> <div id="bigButton" style="font-size:42px;font-family: Arial Black,Arial Bold,Gadget,sans-serif"> <a href="javascript:loadRes()">jailbreak!</a> </div>
+       <div class="section">
 
-<center>JAILBREAK-GO<br>
-  iOS 9.1 - iOS 9.3.4 (32bit)
-  <div id="stuff">
-    <div id="bigButton" style="font-size:42px;font-family: Arial Black,Arial Bold,Gadget,sans-serif">
-      <a href="javascript:loadRes()">jailbreak!</a>
-    </div>
-    <br>
-    <div id="shasums">
-  </div>
-  <br>
-bởi <a href="https://twitter.com/iamIKY2">@I K Y</a>,@MRX,@Duyvsh của ENIGMA-DEV-TEAM<br>
-<img src="data:image/png;base64,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"</a><br>
-</center>
-</body>
+       <div id="team" class="section"> <div> <h2>Team</h2> <div class="members"> <div data-aos="zoom-out" data-aos-duration="700"> <a href="https://www.twitter.com/iamIKY2" target="_blank"> <img src="https://pbs.twimg.com/profile_images/1059084678005551104/vf4L-Zw9_400x400.jpg" alt="Image of I K Y"></img> </a> <h3>I K Y</h3> <p>Exploiting for iOS</p> <a class="social-icon" href="https://www.twitter.com/iamIKY2" target="_blank"> </a> </div> 
+         
+         <div data-aos="zoom-out" data-aos-duration="700"> <a href="https://www.facebook.com/profile.php?id=100013117930187" target="_blank"> <img src="https://scontent.fsgn5-7.fna.fbcdn.net/v/t1.0-9/45250383_544896262624300_4702021361189519360_n.jpg?_nc_cat=103&_nc_oc=AQlrmiCmW3B9zF2VPPp1lhLbtwUj8SkEAWGI9yVxIZjusT7VGbmSBZvwdvzIR15W4NA&_nc_ht=scontent.fsgn5-7.fna&oh=e4d0bb370f383a898248a57187dbe579&oe=5DAD8998" alt="Image of VINH03"></img> </a> <h3>Vinh03</h3> <p>Designer</p> <a class="social-icon" href="https://www.facebook.com/profile.php?id=100013117930187" target="_blank"> </a> </div>
+         
+          <div data-aos="zoom-out" data-aos-duration="700"> <a href="https://twitter.com/qwertyoruiopz" target="_blank"> <img src="https://pbs.twimg.com/profile_images/1041088502811820033/UE94LTlm_400x400.jpg" alt="Image qwertyoruiopz"></img> </a> <h3>qwertyoruiopz</h3> <p>Exploiting for Safari</p> <a class="social-icon" href="https://www.twitter.com/qwertyoruiopz" target="_blank"> </a> </div>
+      
+       <div data-aos="zoom-out" data-aos-duration="700"> <a href="https://twitter.com/coolstarorg" target="_blank"> <img src="https://pbs.twimg.com/profile_images/1127090490338304000/NGN6XZEm_400x400.png" alt="Image qwertyoruiopz"></img> </a> <h3>CoolStar</h3> <p>Package for Cydia</p> <a class="social-icon" href="https://www.twitter.com/coolstarorg" target="_blank"> </a> </div>
+
+        <script data-cfasync="false" src="https://getsileo.app/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://code.jquery.com/jquery.min.js"></script>
+        
+        
+        <script type="text/javascript" src="https://unpkg.com/aos@next/dist/aos.js"></script>
+        
+        
+        
+        
+        
+        
+        <script type="text/javascript">AOS.init();</script>
+        
+        <script type="text/javascript">$(window).scroll(() => $('.header')[window.pageYOffset > 50 ? 'addClass' : 'removeClass']('scrolled'));</script>
+        
+        
+    </body>
 </html>
-
